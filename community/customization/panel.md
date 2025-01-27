@@ -4,7 +4,7 @@
 Do **not** run the following steps on your production nodes.
 :::
 
-Instructions on how to build the panel are also available in the [BUILDING.md](https://github.com/pterodactyl/panel/blob/develop/BUILDING.md) file.
+Instructions on how to build the panel are also available in the [BUILDING.md](https://github.com/pterodactyl/panel/blob/1.0-develop/BUILDING.md) file.
 
 The frontend of the Panel is built with React. Any changes to the source files require to recompile it.
 This also applies to style sheets. The following sections explain how to do so.
@@ -18,12 +18,12 @@ The build tools require NodeJS, yarn is used as the package manager.
 ```bash
 # Ubuntu/Debian
 curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-apt install -y nodejs
+sudo apt install -y nodejs
 
 # CentOS
 curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
 sudo yum install -y nodejs yarn # CentOS 7
-sudo dnf install -y nodejs yarn # CentOS 8
+sudo dnf install -y nodejs yarn # CentOS 8, Rocky Linux 8, AlmaLinux 8
 ```
 
 Install required javascript packages.
@@ -37,10 +37,11 @@ yarn # Installs panel build dependencies
 
 ## Build Panel Assets
 
-The following command will rebuild the Panel frontend.
+The following command will rebuild the Panel frontend. For NodeJS version 17 and above, you must enable the `--openssl-legacy-provider` option before building.
 
 ```bash
 cd /var/www/pterodactyl
+export NODE_OPTIONS=--openssl-legacy-provider # for NodeJS v17+
 yarn build:production # Build panel
 ```
 

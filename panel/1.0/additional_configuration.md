@@ -127,7 +127,13 @@ reCAPTCHA can easily be disabled using the admin panel. In the Settings, select 
 If you cannot access your panel, you can modify the database directly using the following commands.
 
 ```sql
+# If using MariaDB (v11.0.0+)
+mariadb -u root -p
+
+# If using MySQL
 mysql -u root -p
+```
+```sql
 UPDATE panel.settings SET value = 'false' WHERE `key` = 'settings::recaptcha:enabled';
 ```
 
@@ -138,7 +144,13 @@ If possible you should use the panel to update your 2FA settings. If you can't a
 ### Disable 2FA requirement
 
 ```sql
+# If using MariaDB (v11.0.0+)
+mariadb -u root -p
+
+# If using MySQL
 mysql -u root -p
+```
+```sql
 UPDATE panel.settings SET value = 0 WHERE `key` = 'settings::pterodactyl:auth:2fa_required';
 ```
 
@@ -149,3 +161,143 @@ Run the following command in your `/var/www/pterodactyl` directory.
 ``` bash
 php artisan p:user:disable2fa
 ```
+
+## Telemetry
+
+Since 1.11, the Panel collects anonymous metrics about the Panel and all connected nodes.
+This feature is enabled by default, but can be disabled.
+
+The data collected by this feature is not sold or used for advertising purposes.  Aggregate statistics
+may be made public or shared with third-parties for the purposes of improving the software.
+
+### How does it work?
+
+The Telemetry system works by first generating a random UUIDv4 identifier for the Panel installation.
+This identifier is stored in the database so people load-balancing multiple Panel instances can still
+have a unique identifier.  This identifier is then sent to a remote server, along the associated
+telemetry data.  The telemetry data is collected every 24 hours, there is no ongoing collection
+or local storage of the telemetry data, we collect the data right before we send it to the remote
+server.
+
+Currently, all telemetry collection logic is handled by the [TelemetryCollectionService](https://github.com/pterodactyl/panel/blob/1.0-develop/app/Services/Telemetry/TelemetryCollectionService.php#L53)
+on the panel.  This service is responsible for collecting all the data that is sent to the remote
+server.
+
+### What data is collected?
+
+If you wish to see the full data that is collected, please look at the TelemetryCollectionService
+(as linked above), or use the `php artisan p:telemetry` command to view the exact data that will
+be sent to the remote server.
+
+As of 2022-12-12, the data collected consists of:
+
+* Unique identifier for the Panel
+* Version of the Panel
+* PHP version
+* Backup storage driver (S3, Local, etc.)
+* Cache driver (Redis, Memcached, etc.)
+* Database driver and version (MySQL, MariaDB, PostgreSQL, etc.)
+* Resources
+  * Allocations
+    * Total number
+    * Total number of used allocations (assigned to a server)
+  * Backups
+    * Total number
+    * Sum of the total amount of bytes stored by backups
+  * Eggs
+    * Total number
+    * ~~Map of egg UUIDs to the number of servers using that egg~~ (removed in 1.11.2)
+  * Locations
+    * Total number
+  * Mounts
+    * Total number
+  * Nests
+    * Total number
+    * ~~Map of nest UUIDs to the number of servers using eggs in that nest~~ (removed in 1.11.2)
+  * Nodes
+    * Total number
+  * Servers
+    * Total number
+    * Number of servers that are suspended
+  * Users
+    * Total number
+    * Number of users that are admins
+* Nodes
+  * Node UUID
+  * Version of Wings on the node
+  * Docker
+    * Version
+    * Cgroups
+      * Driver
+      * Version
+    * Containers
+      * Total
+      * Running
+      * Paused
+      * Stopped
+    * Storage
+      * Driver
+      * Filesystem
+    * runc
+      * Version
+  * System
+    * Architecture (`amd64`, `arm64`, etc.)
+    * CPU Threads
+    * Memory Bytes
+    * Kernel Version
+    * Operating System (Debian, Fedora, RHEL, Ubuntu, etc.)
+    * Operating System Type (bsd, linux, windows, etc.)
+
+### How is the data stored?
+
+Currently, the data is stored with Cloudflare, we ingest all telemetry data with a Worker which does
+basic processing such as validation and then inserts it into Cloudflare D1.  Right now, there is not
+an API or visualization for any of the data collected, and it can only be manually queried.  Only
+Matthew is able to query the data at this time, but we are working on alternatives to make this data
+more accessible.
+
+### Why?
+
+The primary reason for collecting this data is to help us make better decisions about the future of
+this software.  With the release of 1.11, the minimum PHP version requirement jumped from 7.4 to 8.0,
+however, we wanted to add a feature that required PHP 8.1 which would've made the version requirement
+jump larger and potentially cause issues for some users.  By collecting this data, we can hopefully
+have more insight to how changes like this will affect the community and make better decisions in the
+future.  This is especially important for information like the architecture, kernel version, and
+operating system nodes are using.  For example, we want to utilize a feature that is only present in
+some filesystems, but we have no idea how many people are using those filesystems, so we cannot
+determine if it's worth the effort to implement.
+
+Some of the data is not as useful for making decisions, but is still useful for us to know.
+For example, have you ever wondered how many Panel instances there are?  How many servers are being
+ran across all of those instances?  How many users are using the Panel?  How many of those users are
+admins?  How many servers are using a specific egg?  How many servers are using a specific nest?
+All of these questions can be answered by the data we collect, and can help us and the community
+better understand how the software is being used.
+
+If you have any questions about the data we collect, please feel free to reach out to us on Discord.
+Our goal is to be as transparent as possible, and we want to make sure that the community understands
+what we are doing and why.
+
+### Enabling Telemetry
+
+Telemetry is enabled by default, if you want to enable it after disabling it, edit your `.env` file
+and either remove the `PTERODACTYL_TELEMETRY_ENABLED` line, or set it to `true`.
+
+```text
+PTERODACTYL_TELEMETRY_ENABLED=true
+```
+
+You may also use the `php artisan p:environment:setup` command to enable telemetry, optionally with
+the `--telemetry` flag for a non-interactive setup.
+
+### Disabling Telemetry
+
+To disable telemetry, edit your `.env` file and set `PTERODACTYL_TELEMETRY_ENABLED` to `false`.
+
+```text
+PTERODACTYL_TELEMETRY_ENABLED=false
+```
+
+You may also use the `php artisan p:environment:setup` command to disable telemetry, optionally with
+the `--telemetry=false` flag for a non-interactive setup.

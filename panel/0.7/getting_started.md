@@ -1,3 +1,8 @@
+---
+meta:
+    - name: robots
+      content: noindex
+---
 # Getting Started
 
 ::: danger This Version is End-of-Life
@@ -25,14 +30,14 @@ Pterodactyl does not support most OpenVZ systems due to incompatabilities with D
 this software on an OpenVZ based system you will &mdash; most likely &mdash; not be successful.
 :::
 
-| Operating System | Version | Supported | Notes |
-| ---------------- | ------- | :-------: | ----- |
-| **Ubuntu** | 18.04 | :white_check_mark: | Documentation written assuming Ubuntu 18.04 as the base OS. |
-| | [20.04](/community/installation-guides/panel/ubuntu2004.html) | :white_check_mark: | |
-| **CentOS** | [7](/community/installation-guides/panel/centos7.html) | :white_check_mark: | Extra repos are required. |
-| | [8](/community/installation-guides/panel/centos8.html) | :white_check_mark: | All required packages are part of the base repos. |
-| **Debian** | [9](/community/installation-guides/panel/debian9.html) | :white_check_mark: | Extra repos are required. |
-| | [10](/community/installation-guides/panel/debian10.html) | :white_check_mark: | All required packages are part of the base repos. |
+| Operating System | Version                                                       |     Supported      | Notes                                                       |
+| ---------------- | ------------------------------------------------------------- | :----------------: | ----------------------------------------------------------- |
+| **Ubuntu**       | 18.04                                                         | :white_check_mark: | Documentation written assuming Ubuntu 18.04 as the base OS. |
+|                  | [20.04](/community/installation-guides/panel/ubuntu2004.html) | :white_check_mark: |                                                             |
+| **CentOS**       | [7](/community/installation-guides/panel/centos7.html)        | :white_check_mark: | Extra repos are required.                                   |
+|                  | [8](/community/installation-guides/panel/centos8.html)        | :white_check_mark: | All required packages are part of the base repos.           |
+| **Debian**       | [9](/community/installation-guides/panel/debian9.html)        | :white_check_mark: | Extra repos are required.                                   |
+|                  | [10](/community/installation-guides/panel/debian10.html)      | :white_check_mark: | All required packages are part of the base repos.           |
 
 ## Dependencies
 * PHP `7.2` with the following extensions: `cli`, `openssl`, `gd`, `mysql`, `PDO`, `mbstring`, `tokenizer`, `bcmath`, `xml` or `dom`, `curl`, `zip`, and `fpm` if you are planning to use nginx
@@ -56,7 +61,7 @@ apt -y install software-properties-common curl
 # Add additional repositories for PHP, Redis, and MariaDB
 LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
 add-apt-repository -y ppa:chris-lea/redis-server
-curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash
 
 # Update repositories list
 apt update

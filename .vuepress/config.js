@@ -3,9 +3,6 @@ module.exports = {
     title: 'Pterodactyl',
     description: 'Pterodactyl is an open-source game server management panel built with PHP, React, and Go. Designed with security in mind, Pterodactyl runs all game servers in isolated Docker containers while exposing a beautiful and intuitive UI to end users.',
     plugins: [
-        ['@vuepress/google-analytics', {
-            ga: 'UA-87324178-3'
-        },],
         ['@vuepress/search', {
             searchMaxSuggestions: 10
         }],
@@ -77,8 +74,7 @@ module.exports = {
                     children: [
                         '/community/installation-guides/panel/centos7.md',
                         '/community/installation-guides/panel/centos8.md',
-                        '/community/installation-guides/panel/debian10.md',
-                        '/community/installation-guides/panel/debian11.md',
+                        '/community/installation-guides/panel/debian.md',
                     ]
                 },
                 {
@@ -87,8 +83,7 @@ module.exports = {
                     children: [
                         '/community/installation-guides/wings/centos7.md',
                         '/community/installation-guides/wings/centos8.md',
-                        '/community/installation-guides/wings/debian10.md',
-                        '/community/installation-guides/wings/debian11.md',
+                        '/community/installation-guides/wings/debian.md',
                     ]
                 },
                 {
@@ -141,7 +136,7 @@ module.exports = {
                     currentVersion: '1.0',
                     versions: [
                         {
-                            title: '1.10',
+                            title: '1.11',
                             name: '1.0',
                             status: 'stable',
                             children: [
@@ -162,7 +157,7 @@ module.exports = {
                     currentVersion: '1.0',
                     versions: [
                         {
-                            title: '1.7',
+                            title: '1.11',
                             name: '1.0',
                             status: 'stable',
                             children: [
@@ -187,13 +182,6 @@ module.exports = {
                     collapsable: false,
                     children: [
                         '/guides/mounts.md',
-                    ],
-                },
-                {
-                    title: 'Development & Ops',
-                    collapsable: true,
-                    children: [
-                        '/ops/publish_release.md',
                     ],
                 },
             ],
